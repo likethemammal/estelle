@@ -14,6 +14,9 @@ Modernizr.addTest('videoautoplay', function(){
         clearTimeout(timeout);
         elem.removeEventListener('playing', testAutoplay);
         addTest('videoautoplay', arg && arg.type === 'playing' || elem.currentTime !== 0);
+        if (onVideoCanAutoplay && !videoLoaded) {
+            onVideoCanAutoplay();
+        }
         elem.parentNode.removeChild(elem);
     };
 

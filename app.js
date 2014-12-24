@@ -358,7 +358,7 @@ View = {
     }
 };
 
-var Model = {
+Model = {
 
     googleFeedGetterLink: 'http://ajax.googleapis.com/ajax/services/feed/load?v=2.0',
     maxNumEntries: 50,
@@ -366,7 +366,6 @@ var Model = {
 
     init: function() {
         this.getFacebookFeed();
-        this.getSoundcloudFeed();
     },
 
     getRSSFeedData: function(feedLink, feedID) {

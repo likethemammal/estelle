@@ -50,11 +50,11 @@
 
     <div id="video-background-container">
         <video
-            muted
-            loop
-            poster="imgs/estelle-bg-blur.jpg"
-            id="video-background"
-            class="video-js">
+                muted
+                loop
+                poster="imgs/estelle-bg-blur.jpg"
+                id="video-background"
+                class="video-js">
             <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
         </video>
         <img id="img-background" src="imgs/estelle-bg-blur.jpg" alt="Blurry background image"/>
@@ -163,22 +163,24 @@
 <!-- Video Loading Stuff -->
 <script>
     var View;
+    var Model;
     var videoLoaded = false;
 
-    setTimeout(function() {
-        var video = document.getElementById('video-background');
+    function onVideoCanAutoplay() {
+        setTimeout(function() {
+            var video = document.getElementById('video-background');
 
         if (Modernizr.videoautoplay) {
             var src = '';
             var videoSrcs = {
-                webm: "https://drive.google.com/uc?id=0B4u74V_Dg7Syd3AxcU9TSk5QMUE&export=download",
-                ogv: "https://drive.google.com/uc?id=0B4u74V_Dg7SyVUQ1bHlGemw3bWs&export=download",
-                mp4: "https://drive.google.com/uc?id=0B4u74V_Dg7Sydko0OHAtTk12Qjg&export=download"
+                webm: "https://dl.dropboxusercontent.com/u/64274105/Estelle's%20Videos/estelle-bg.webm",
+                ogv: "https://dl.dropboxusercontent.com/u/64274105/Estelle's%20Videos/estelle-bg.ogv",
+                mp4: "https://dl.dropboxusercontent.com/u/64274105/Estelle's%20Videos/estelle-bg.mp4"
             };
             var blurVideoSrcs = {
-                webm: "https://drive.google.com/uc?id=0B4u74V_Dg7SyT01hNXhTbFhWR3M&export=download",
-                ogv: "https://drive.google.com/uc?id=0B4u74V_Dg7SyaExaWGJHcWFhWTQ&export=download",
-                mp4: "https://drive.google.com/uc?id=0B4u74V_Dg7SydkxUbUpxV3R5dHM&export=download"
+                webm: "https://dl.dropboxusercontent.com/u/64274105/Estelle's%20Videos/estelle-bg-blur.webm",
+                ogv: "https://dl.dropboxusercontent.com/u/64274105/Estelle's%20Videos/estelle-bg-blur.ogv",
+                mp4: "https://dl.dropboxusercontent.com/u/64274105/Estelle's%20Videos/estelle-bg-blur.mp4"
             };
 
             if (Modernizr.cssfilters) {
@@ -207,10 +209,11 @@
             video.src = src;
             video.autoplay = true;
             video.onended = restartVideo;
-            video.oncanplaythrough = onVideoReady;
+            video.oncanplaythrough = setTimeout(onVideoReady, 300);
         } else {
             video.style.display = 'none';
             video.src = '';
+            console.log(video.buffered);
             onVideoReady();
         }
 
@@ -222,12 +225,30 @@
         }
 
         function onVideoReady() {
-            videoLoaded = true;
-            if (View) {
-                View.onSoundcloudLoaded();
+            try {
+                if (video.buffered.end(0) > 3) {
+                    console.log('buffered');
+                    videoLoaded = true;
+                    if (View && Model) {
+                        Model.getSoundcloudFeed();
+                        View.onSoundcloudLoaded();
+                    }
+                } else {
+                    setTimeout(onVideoReady, 1000);
+                }
+            } catch (e) {
+                setTimeout(onVideoReady, 1000);
             }
+
+            }
+        }, 400); //Wait time needed for modernizer to run test
+    }
+
+    setTimeout(function() {
+        if (!videoLoaded) {
+            onVideoCanAutoplay();
         }
-    }, 300); //Wait time needed for modernizer to run test
+    }, 300)
 </script>
 
 <script src="libs/polyfills.js"></script>
