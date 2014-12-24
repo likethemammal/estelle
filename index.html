@@ -170,7 +170,7 @@
         setTimeout(function() {
             var video = document.getElementById('video-background');
 
-        if (Modernizr.videoautoplay) {
+        if (Modernizr.videoautoplay && Modernizr.video.h264) {
             var src = '';
             var videoSrcs = {
                 webm: "https://dl.dropboxusercontent.com/u/64274105/Estelle's%20Videos/estelle-bg.webm",
@@ -180,31 +180,34 @@
             var blurVideoSrcs = {
                 webm: "https://dl.dropboxusercontent.com/u/64274105/Estelle's%20Videos/estelle-bg-blur.webm",
                 ogv: "https://dl.dropboxusercontent.com/u/64274105/Estelle's%20Videos/estelle-bg-blur.ogv",
-                mp4: "https://dl.dropboxusercontent.com/u/64274105/Estelle's%20Videos/estelle-bg-blur.mp4"
+                mp4: "http://vimeo.com/115364255/download?t=1419462632&v=320346803&s=450deddb49372e0b821ea1b4f0324e60"
             };
 
-            if (Modernizr.cssfilters) {
-                var blurStr = 'blur(3px)';
+            src = blurVideoSrcs.mp4;
 
-                video.style['-webkit-filter'] = blurStr;
-                video.style['filter'] = blurStr;
 
-                if (Modernizr.video.webm) {
-                    src = videoSrcs.webm;
-                } else if (Modernizr.video.ogg) {
-                    src = videoSrcs.ogv;
-                } else if (Modernizr.video.h264) {
-                    src = videoSrcs.mp4;
-                }
-            } else {
-                if (Modernizr.video.webm) {
-                    src = blurVideoSrcs.webm;
-                } else if (Modernizr.video.ogg) {
-                    src = blurVideoSrcs.ogv;
-                } else if (Modernizr.video.h264) {
-                    src = blurVideoSrcs.mp4;
-                }
-            }
+//            if (Modernizr.cssfilters) {
+//                var blurStr = 'blur(3px)';
+//
+//                video.style['-webkit-filter'] = blurStr;
+//                video.style['filter'] = blurStr;
+//
+//                if (Modernizr.video.webm) {
+//                    src = videoSrcs.webm;
+//                } else if (Modernizr.video.ogg) {
+//                    src = videoSrcs.ogv;
+//                } else if (Modernizr.video.h264) {
+//                    src = videoSrcs.mp4;
+//                }
+//            } else {
+//                if (Modernizr.video.webm) {
+//                    src = blurVideoSrcs.webm;
+//                } else if (Modernizr.video.ogg) {
+//                    src = blurVideoSrcs.ogv;
+//                } else if (Modernizr.video.h264) {
+//                    src = blurVideoSrcs.mp4;
+//                }
+//            }
 
             video.src = src;
             video.autoplay = true;
@@ -226,7 +229,7 @@
 
         function onVideoReady() {
             try {
-                if (video.buffered.end(0) > 3) {
+                if (video.buffered.end(0) > 3 || !(Modernizr.videoautoplay && Modernizr.video.h264)) {
                     console.log('buffered');
                     videoLoaded = true;
                     if (View && Model) {
