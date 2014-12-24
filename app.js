@@ -275,6 +275,8 @@ View = {
             pauseImg.src = 'imgs/audio_stop.svg';
             audioEl.src = streamingURL;
 
+            audioEl.preload = 'none';
+
             if (track.artwork_url) {
                 albumImg.src = track.artwork_url;
                 this.listenToLoad(albumImg);
