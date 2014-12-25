@@ -1,6 +1,8 @@
 var jsonCallbackFunc;
 var prefixes = ['-webkit-', '-moz-', '-o-', ''];
 var Player;
+var View;
+var Model;
 
 Player = {
     onPlayClick: function(ev) {
@@ -275,7 +277,7 @@ View = {
             pauseImg.src = 'imgs/audio_stop.svg';
             audioEl.src = streamingURL;
 
-            audioEl.preload = 'none';
+            audioEl.preload = 'auto';
 
             if (track.artwork_url) {
                 albumImg.src = track.artwork_url;
@@ -339,7 +341,7 @@ View = {
     },
 
     onSoundcloudLoaded: function() {
-        if (this.elsLoaded < this.totalLoading || !videoLoaded) {
+        if (this.elsLoaded < this.totalLoading) {
             return false;
         }
         var header = document.querySelector('#soundcloud-section .section-header');
@@ -368,6 +370,7 @@ Model = {
 
     init: function() {
         this.getFacebookFeed();
+        this.getSoundcloudFeed();
     },
 
     getRSSFeedData: function(feedLink, feedID) {
