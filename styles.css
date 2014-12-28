@@ -13,10 +13,6 @@ body {
     position: relative;
 }
 
-#header {
-    position: relative;
-}
-
 #background-container {
     position: fixed;
     top: 0;
@@ -36,6 +32,19 @@ body {
     left: 0;
     background: rgba(0,0,0,0.3);
     z-index: 1;
+}
+
+#content-wrapper { /* Needed to fix mobile background fading bug */
+    position: relative;
+    z-index: 1;
+
+    -webkit-transform: translateZ(0);
+    -moz-transform: translateZ(0);
+    transform: translateZ(0);
+}
+
+#header {
+    position: relative;
 }
 
 /* Tagline Styles */
