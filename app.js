@@ -355,10 +355,11 @@ View = {
         header.classList.add('soundcloud-colors');
     },
 
-    setProfileImage: function(imageSrc) {
+    setProfileImage: function(imgSrc) {
         var imageEl = document.getElementById('tagline-img');
+        var largeImgSrc = imgSrc.substring(0, imgSrc.length - 9) + 't500x500.jpg';
 
-        imageEl.src = imageSrc;
+        imageEl.src = largeImgSrc;
     }
 };
 
