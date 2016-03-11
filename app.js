@@ -1,4 +1,3 @@
-var jsonCallbackFunc;
 var prefixes = ['-webkit-', '-moz-', '-o-', ''];
 var Player;
 var View;
@@ -135,9 +134,8 @@ View = {
     facebookMaxNum: 8,
     soundcloudMaxNum: 8,
 
-    onFacebookData: function(data) {
-        var feedData = data.responseData.feed;
-        var entries = feedData.entries;
+    onFacebookData: function(posts) {
+        var entries = posts.data;
         var docFragment = document.createDocumentFragment();
         var facebookEl = document.querySelector('#facebook-section .section-content');
         var months = [ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" ];
@@ -146,11 +144,11 @@ View = {
         for (var i = 0; i < entriesLength; i++) {
             var entry = entries[i];
 
-            if (!entry.contentSnippet) {
+            if (!entry.message) {
                 continue;
             }
 
-            var date = new Date(entry.publishedDate);
+            var date = new Date(entry.created_time);
             var entryEl = document.createElement('div');
             var entryLink = document.createElement('a');
             var dateEl = document.createElement('div');
@@ -158,6 +156,7 @@ View = {
             var viewMoreEl = document.createElement('div');
             var viewMoreLink = document.createElement('a');
             var linkTitle = 'View this full post';
+            var link = 'http://facebook.com/' + entry.id;
 
             var day = date.getDate();
             var month = date.getMonth();
@@ -176,13 +175,13 @@ View = {
             dateEl.textContent = date;
             viewMoreLink.textContent = 'View';
 
-            entryLink.href = entry.link;
-            viewMoreLink.href = entry.link;
+            entryLink.href = link;
+            viewMoreLink.href = link;
 
             entryLink.title = linkTitle;
             viewMoreLink.title = linkTitle;
 
-            contentEl.innerHTML = entry.contentSnippet;
+            contentEl.innerHTML = entry.message;
 
             viewMoreEl.appendChild(viewMoreLink);
 
@@ -365,35 +364,26 @@ View = {
 
 Model = {
 
-    googleFeedGetterLink: 'http://ajax.googleapis.com/ajax/services/feed/load?v=2.0',
     maxNumEntries: 50,
-    facebookFeedLink: 'https://www.facebook.com/feeds/page.php?id=96726108616&format=rss20',
+    facebookFeedLink: "/96726108616/posts?access_token=903772693054200|442cce105500647f798f740c18f9db44",
 
     init: function() {
-        this.getFacebookFeed();
-        this.getSoundcloudFeed();
-    },
-
-    getRSSFeedData: function(feedLink, feedID) {
-        var feedLinkOption = '&q=' + encodeURIComponent(feedLink);
-        var numExtriesOption = '&num=' + this.maxNumEntries;
-        var callbackOption = '&callback=jsonCallbackFunc';
-        var scriptSource = this.googleFeedGetterLink + feedLinkOption + numExtriesOption + callbackOption;
-        var script = document.getElementById(feedID + '-json');
-
-        script.src = scriptSource;
+        FBpromise.then(function() {
+            console.log('fb loaded');
+            this.getFacebookFeed();
+            this.getSoundcloudFeed();
+        }.bind(this));
     },
 
     getFacebookFeed: function() {
-        var feedID = 'facebook';
-        var script = document.createElement('script');
-        var onFacebookData = this.onFeedData(View.onFacebookData, feedID);
-
-        script.id = feedID + '-json';
-        jsonCallbackFunc = onFacebookData;
-
-        document.body.appendChild(script);
-        this.getRSSFeedData(this.facebookFeedLink, feedID);
+        FB.api(
+            this.facebookFeedLink,
+            function (response) {
+                if (response && !response.error) {
+                    View.onFacebookData(response);
+                }
+            }
+        );
     },
 
     getSoundcloudFeed: function() {
@@ -403,25 +393,12 @@ Model = {
         var promise = deferred.promise;
 
         SC.get(fetchingURL, function(tracks) {
-            View.onSoundcloudData(tracks)
+            View.onSoundcloudData(tracks);
 
             if (deferred) {
                 deferred.resolve();
             }
         }. bind(this));
-    },
-
-    onFeedData: function(onDataFunc, feedID) {
-        var onFeedData = function(data) {
-            var dataFunc = onDataFunc.bind(View);
-            if (data.responseStatus === 200) {
-                dataFunc(data);
-            } else {
-                console.warn('The "' + feedID + '" feed loading failed.')
-            }
-        };
-
-        return onFeedData;
     }
 };
 
