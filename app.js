@@ -365,19 +365,21 @@ View = {
 Model = {
 
     maxNumEntries: 50,
-    facebookFeedLink: "/96726108616/posts?access_token=903772693054200|442cce105500647f798f740c18f9db44",
+    fbID: "100012769178856",
+    fbFeedStr: "/posts?access_token=903772693054200|442cce105500647f798f740c18f9db44",
 
     init: function() {
         FBpromise.then(function() {
-            console.log('fb loaded');
             this.getFacebookFeed();
             this.getSoundcloudFeed();
         }.bind(this));
     },
 
     getFacebookFeed: function() {
+        var url = "/" + this.fbID + this.fbFeedStr;
+
         FB.api(
-            this.facebookFeedLink,
+            url,
             function (response) {
                 if (response && !response.error) {
                     View.onFacebookData(response);
